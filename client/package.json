@@ -1,0 +1,19 @@
+{
+  "name": "tag-notebook-client",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host",
+    "deploy": "node scripts/deploy-static.js"
+  },
+  "devDependencies": {
+    "vite": "^5.4.8"
+  },
+  "type": "module",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.1",
+    "tag-notebook-prototype": "file:.."
+  }
+}

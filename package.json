@@ -1,0 +1,17 @@
+{
+  "name": "tag-notebook-prototype",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tag-first notebook web prototype with static build pipeline.",
+  "scripts": {
+    "client:dev": "npm --prefix client run dev",
+    "client:build": "npm --prefix client run build",
+    "client:preview": "npm --prefix client run preview",
+    "client:deploy": "npm --prefix client run deploy",
+    "server": "npm --prefix server run start",
+    "server:dev": "npm --prefix server run dev"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

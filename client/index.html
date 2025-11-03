@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>标签笔记原型</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&family=Noto+Sans+SC:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="authOverlay" class="auth-overlay hidden">
+      <div class="auth-card">
+        <h2 id="authTitle">Sign in</h2>
+        <p id="authSubtitle" class="auth-subtitle">Sign in to sync your notes</p>
+        <form id="loginForm" class="auth-form" autocomplete="on">
+          <label>
+            <span>Email</span>
+            <input type="email" name="email" autocomplete="email" required />
+          </label>
+          <label>
+            <span>Password</span>
+            <input type="password" name="password" autocomplete="current-password" minlength="6" required />
+          </label>
+          <button class="ghost primary" type="submit">Sign in</button>
+        </form>
+        <form id="registerForm" class="auth-form hidden" autocomplete="on">
+          <label>
+            <span>Email</span>
+            <input type="email" name="email" autocomplete="email" required />
+          </label>
+          <label>
+            <span>Password</span>
+            <input type="password" name="password" autocomplete="new-password" minlength="6" required />
+          </label>
+          <button class="ghost primary" type="submit">Create account</button>
+        </form>
+        <p id="authError" class="auth-error hidden"></p>
+        <p class="auth-switch">
+          <span id="authSwitchHint">Need an account?</span>
+          <button type="button" id="authSwitchButton" class="link-button">Sign up</button>
+        </p>
+      </div>
+    </div>
+    <div id="tagContextMenu" class="context-menu hidden" role="menu">
+      <button type="button" data-action="rename">Rename tag</button>
+      <button type="button" data-action="delete" class="danger">Delete tag</button>
+    </div>
+    <div class="app-shell">
+      <header class="app-header">
+        <button class="back-button" data-target="tags" aria-label="返回标签首页">
+          <span aria-hidden="true">&larr;</span>
+          <span class="back-label">返回</span>
+        </button>
+        <div class="title-block">
+          <p class="eyebrow">Tag-first Notebook</p>
+          <h1 id="primaryTitle">我的笔记</h1>
+        </div>
+        <div class="header-actions">
+          <button class="ghost" id="syncStatus" disabled>Synced</button>
+          <button class="ghost hidden" id="logoutButton">Sign out</button>
+
+          <button class="ghost danger hidden" id="deleteNoteButton">删除笔记</button>
+        </div>
+      </header>
+      <main class="app-main">
+        <section id="tagView" class="view visible">
+          <div class="view-header">
+            <div>
+              <h2>全部标签</h2>
+              <p class="subtitle">点击任意标签以按主题浏览笔记</p>
+            </div>
+            <label class="search" for="tagSearch">
+              <span aria-hidden="true">&#128269;</span>
+              <input id="tagSearch" type="search" placeholder="搜索标签&hellip;" />
+            </label>
+          </div>
+          <div class="tag-cloud" id="tagCloud"></div>
+          <div class="empty-hint hidden" id="tagEmptyHint">
+            <p>No tags yet. Type <code>#tag</code> in any note to create the first one.</p>
+          </div>
+        </section>
+
+        <section id="listView" class="view">
+          <div class="view-header">
+            <div>
+              <button class="back-button inline" data-target="tags" aria-label="返回标签视图">
+                &larr;
+              </button>
+              <h2 id="tagTitle"># 灵感</h2>
+              <p class="subtitle" id="tagMeta">0 notes · No updates yet</p>
+            </div>
+            <div class="list-filters" role="tablist">
+              <button class="chip active" data-sort="latest">Latest</button>
+              <button class="chip" data-sort="oldest">Oldest</button>
+              <button class="chip" data-sort="handwrite">With handwriting</button>
+            </div>
+          </div>
+          <div class="note-list" id="noteList"></div>
+        </section>
+
+        <section id="editorView" class="view">
+          <div class="editor-chrome">
+            <div class="editor-meta">
+              <button class="back-button inline" data-target="list" aria-label="返回列表">
+                &larr;
+              </button>
+              <div>
+                <p class="eyebrow">Current note</p>
+                <input
+                  type="text"
+                  id="noteTitleInput"
+                  placeholder="Untitled note"
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+            <div class="editor-toolbar">
+              <span id="saveStatus">Saved</span>
+              <div class="toolbar-actions">
+                <button class="ghost" id="shareButton" disabled>分享</button>
+                <button class="ghost" id="infoButton" disabled>信息</button>
+                <button class="ghost primary" id="saveButton">保存</button>
+              </div>
+            </div>
+          </div>
+          <div class="editor-body">
+            <div class="editor-panel">
+              <div class="mode-switch" role="tablist">
+                <button class="mode-tab active" data-mode="keyboard">键盘</button>
+                <button class="mode-tab" data-mode="handwrite">手写</button>
+              </div>
+              <div
+                id="richEditor"
+                class="rich-editor"
+                contenteditable="true"
+                spellcheck="false"
+                data-placeholder="Start writing and use # to add tags"
+              ></div>
+              <div class="inline-tags" id="inlineTags"></div>
+            </div>
+            <div class="handwrite-panel" id="handwritePanel">
+              <canvas id="inkCanvas"></canvas>
+              <div class="ink-actions">
+                <button class="ghost" data-action="undo">撤销</button>
+                <button class="ghost" data-action="clear">清空画布</button>
+                <label class="pen-width">
+                  <span>笔触</span>
+                  <input type="range" min="1" max="12" value="4" id="penSize" />
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="editor-tags">
+            <p class="eyebrow">Linked tags</p>
+            <div class="tag-strip" id="editorTagStrip"></div>
+            <div class="tag-suggestions" id="tagSuggestions"></div>
+          </div>
+          <div class="status-bar">
+            <span>Last updated · <strong id="lastEdited">-</strong></span>
+            <span>Words <strong id="wordCount">0</strong></span>
+          </div>
+        </section>
+      </main>
+      <button class="fab" data-action="new-note" aria-label="新建笔记">
+        <span>+</span>
+      </button>
+    </div>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
+
