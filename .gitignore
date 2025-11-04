@@ -4,4 +4,7 @@ client/deploy/
 server/node_modules/
 server/.env
 .DS_Store
+client/.env
+server/.env
+*.env
 
